@@ -69,7 +69,31 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public void update(Seller objSeller) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement(
+					"UPDATE seller "
+					+"SET Name = ? , Email = ? , BirthDate = ? , BaseSalary = ? , DepartmentId = ? "
+					+"WHERE Id = ?" );
+					//Statement.RETURN_GENERATED_KEYS);
+			
+			st.setString(1, objSeller.getName());
+			st.setString(2, objSeller.getEmail());
+			st.setDate(3, new java.sql.Date(objSeller.getBirthDate().getTime()));
+			st.setDouble(4, objSeller.getBaseSalary());
+			st.setInt(5, objSeller.getDepartment().getId());
+			st.setInt(6, objSeller.getId());
+			
+			st.executeUpdate();
+			
+			
+		}
+		catch(SQLException exception) {
+			throw new DbException(exception.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 
