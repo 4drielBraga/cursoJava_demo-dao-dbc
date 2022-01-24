@@ -31,13 +31,17 @@ public class Program {
 		}
 		
 		System.out.println("\n=== TEST 3: seller findAll =====");
-		
 		list = sellerDao.findAll();
 		
 		for(Seller objt : list) {
 			System.out.println(objt);
 		}
 
+		
+		System.out.println("\n=== TEST 4: seller seller insert =====");
+		Seller objSeller = new Seller(null, "Greg", "greg@gmail.com", new Date(),4000.00,department);
+		sellerDao.insert(objSeller);
+		System.out.println("Inserted! New id = " + objSeller.getId());
 	}
 
 }
