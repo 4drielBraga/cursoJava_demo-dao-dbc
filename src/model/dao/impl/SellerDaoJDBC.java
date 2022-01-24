@@ -107,7 +107,8 @@ public class SellerDaoJDBC implements SellerDao {
 					+"WHERE Id = ? " );
 			
 			st.setInt(1, id);
-			st.executeUpdate();
+			int rows = st.executeUpdate();
+			
 			
 		}
 		catch(SQLException exception) {
