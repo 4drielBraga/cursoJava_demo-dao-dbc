@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import db.DB;
@@ -46,7 +47,10 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 					int id = rs.getInt(1);
 					objDepartment.setId(id);
 				}
-				DB.closeResultSet(rs);
+				
+			}
+			else {
+				throw new DbException("\"Unexpected error! No rows affected!\"");
 			}
 		}
 		catch(SQLException exception){
@@ -73,12 +77,12 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			
 			st.executeUpdate();		
 			}
-			catch (SQLException e) {
-				throw new DbException(e.getMessage());
-			}
-			finally {
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
 			DB.closeStatement(st);
-			}
+		}
 		
 		
 	}
@@ -122,6 +126,12 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			
 			rs = st.executeQuery();
 			
+			if(rs.next()) {
+				Department objDepartment = new Department();
+				objDepartment.setId(rs.getInt("Id"));
+				objDepartment.setName(rs.getString("Name"));
+				return objDepartment;
+			}
 			
 			
 			return null;
@@ -139,8 +149,37 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public List<Department> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"SELECT department.*,department.Name as DepName "
+					+"FROM department "
+					+"ORDER BY Name");
+					
+			rs = st.executeQuery();	
+			
+			List<Department> listDepartment = new ArrayList();
+			
+			while(rs.next()) {
+				Department objDepartment = new Department();
+				objDepartment.setId(rs.getInt("Id"));
+				objDepartment.setName(rs.getNString("Name"));
+				listDepartment.add(objDepartment);
+			}
+			
+			return listDepartment;
+		}
+		catch(SQLException exception) {
+			throw new DbException(exception.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+		
 	}
 
 }
